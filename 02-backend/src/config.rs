@@ -57,7 +57,8 @@ impl Config {
             // provisioned → defaults to "mock" so dev/tests work).
             payment_mode: {
                 let explicit = std::env::var("PAYMENT_MODE").ok();
-                let has_creds = std::env::var("SATIM_USERNAME").is_ok() && std::env::var("SATIM_PASSWORD").is_ok();
+                let has_creds = std::env::var("SATIM_USERNAME").map(|v| !v.trim().is_empty()).unwrap_or(false)
+                    && std::env::var("SATIM_PASSWORD").map(|v| !v.trim().is_empty()).unwrap_or(false);
                 explicit.unwrap_or_else(|| if has_creds { "satim".into() } else { "mock".into() })
             },
             satim_base_url: var("SATIM_BASE_URL", "https://cib.satim.dz/payment/rest"),
