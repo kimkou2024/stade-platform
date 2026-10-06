@@ -1,0 +1,69 @@
+# Render Blueprint — deploy the whole platform on Render's free tier.
+# Put this file at the ROOT of a Git repo that also contains 02-backend/ and
+# 05-frontend/ (the deliverable folders, unzipped). Then on Render:
+#   New + -> Blueprint -> connect the repo -> Apply.
+#
+# Free-tier notes: web services sleep after ~15 min idle (first hit wakes them,
+# ~30s cold start). Free Postgres expires after ~90 days. Rust image builds take
+# several minutes the first time.
+
+databases:
+  - name: stade-db
+    plan: free
+
+services:
+  # Redis / Key Value (sessions, seat-lock TTL, realtime counters)
+  - type: redis
+    name: stade-redis
+    plan: free
+    ipAllowList: []          # internal access only
+
+  # Rust/Axum API
+  - type: web
+    name: stade-backend
+    runtime: docker
+    plan: free
+    dockerfilePath: ./02-backend/Dockerfile
+    dockerContext: ./02-backend
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase: { name: stade-db, property: connectionString }
+      - key: REDIS_URL
+        fromService: { name: stade-redis, type: redis, property: connectionString }
+      - key: JWT_SECRET
+        generateValue: true
+      - key: BOOTSTRAP_TOKEN
+        generateValue: true
+      # 32-byte Ed25519 seed, base64 no-pad. MUST stay stable (changing it
+      # invalidates issued QR tickets). Paste a value in the dashboard:
+      #   python3 -c 'import os,base64;print(base64.b64encode(os.urandom(32)).decode().rstrip("="))'
+      - key: QR_SIGNING_SEED
+        sync: false
+      - key: MAX_TICKETS_PER_ORDER
+        value: "5"
+      - key: SEAT_LOCK_TTL_SECS
+        value: "600"
+      # Set to the backend's own public URL after first deploy (for SATIM return).
+      - key: RETURN_BASE_URL
+        sync: false
+      # Payments + email left blank -> mock payments / logged email.
+      - key: SATIM_USERNAME
+        value: ""
+      - key: SATIM_PASSWORD
+        value: ""
+      - key: SMTP_HOST
+        value: ""
+
+  # SvelteKit SSR (public site + back-office)
+  - type: web
+    name: stade-frontend
+    runtime: docker
+    plan: free
+    dockerfilePath: ./05-frontend/Dockerfile
+    dockerContext: ./05-frontend
+    envVars:
+      # Set to the backend service's public URL after it deploys
+      # (e.g. https://stade-backend.onrender.com).
+      - key: PUBLIC_API_BASE
+        sync: false

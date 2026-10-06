@@ -1,0 +1,31 @@
+[package]
+name = "stade-backend"
+version = "0.1.0"
+edition = "2021"
+description = "E-ticketing & access-control backend for Stade Ali Ammar (SOGISL). Imposed stack: Rust/Axum/Tokio + PostgreSQL + Redis."
+
+[dependencies]
+axum = "0.7"
+tokio = { version = "1", features = ["full"] }
+tower-http = { version = "0.5", features = ["trace", "cors"] }
+sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono", "macros", "rust_decimal"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+uuid = { version = "1", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+rust_decimal = { version = "1", features = ["serde"] }
+thiserror = "1"
+dotenvy = "0.15"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+argon2 = "0.5"
+jsonwebtoken = "9"
+ed25519-dalek = { version = "2", features = ["rand_core"] }
+rand = "0.8"
+base64 = "0.22"
+totp-rs = { version = "5", features = ["otpauth", "gen_secret"] }
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+printpdf = "0.6"
+qrcode = { version = "0.12", default-features = false }
+redis = { version = "0.27", features = ["tokio-comp", "connection-manager"] }
+lettre = { version = "0.11", default-features = false, features = ["tokio1-rustls-tls", "smtp-transport", "builder"] }
