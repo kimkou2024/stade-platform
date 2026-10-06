@@ -22,6 +22,7 @@ use axum::middleware::{self, Next};
 use axum::response::Response;
 use sqlx::postgres::PgPoolOptions;
 use tower_http::trace::TraceLayer;
+use tower_http::cors::CorsLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 use crate::config::Config;
@@ -101,7 +102,8 @@ async fn main() -> anyhow_lite::Result {
     };
     let app = routes::router(state.clone())
         .layer(middleware::from_fn_with_state(state.clone(), rate_limit_mw))
-        .layer(TraceLayer::new_for_http());
+        .layer(TraceLayer::new_for_http())
+        .layer(CorsLayer::permissive());
 
     let listener = tokio::net::TcpListener::bind(&bind)
         .await

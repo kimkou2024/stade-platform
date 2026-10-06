@@ -1,7 +1,8 @@
 // Typed API client for the Axum backend. Token kept in memory + localStorage.
 import { browser } from '$app/environment';
+import { env } from '$env/dynamic/public';
 
-const BASE = (browser && (window as any).PUBLIC_API_BASE) || 'http://localhost:8080';
+const BASE = (browser && (window as any).PUBLIC_API_BASE) || env.PUBLIC_API_BASE || 'http://localhost:8080';
 
 function read(k: string): string | null { try { return browser ? localStorage.getItem(k) : null; } catch { return null; } }
 function write(k: string, v: string) { try { if (browser) localStorage.setItem(k, v); } catch { /* ignore */ } }
