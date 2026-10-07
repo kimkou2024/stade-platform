@@ -17,6 +17,10 @@
     <p class="mut">Vous disposez d'un droit d'accès, de rectification et de suppression de vos
       données, exerçables depuis <a href="/me">votre espace</a> (modifier le profil, supprimer
       le compte).</p>
+    <h3 style="font-size:15px;margin-top:10px">Suppression du compte et des données</h3>
+    <p class="mut">Pour supprimer votre compte et les données associées (identité, compte,
+      historique d'achats), suivez les étapes détaillées sur la page
+      <a href="/supprimer-compte"><strong>Supprimer mon compte</strong></a>.</p>
     <h3 style="font-size:15px;margin-top:10px">Conservation</h3>
     <p class="mut">Les données sont conservées pour la durée nécessaire puis anonymisées ou
       supprimées. L'hébergement est réalisé sur le territoire national.</p>
